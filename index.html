@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oráculo de Belline</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background: radial-gradient(circle, #2a2a40, #0a0a20); 
+            color: white;
+            margin: 0; /* Evita márgenes innecesarios */
+            padding: 20px; /* Espaciado para evitar solapamientos */
+        }
+
+        /* Botón arriba */
+        .boton-container {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Contenedor principal */
+        .container { 
+            display: flex; 
+            flex-direction: row; /* Organiza imágenes a la izquierda y cartas a la derecha */
+            gap: 20px; 
+            align-items: flex-start; 
+            max-width: 1000px; 
+            padding: 20px; 
+        }
+
+        /* Contenedor de imágenes */
+        .imagenes-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+
+        .imagen-portada, .imagen-extra { 
+            max-width: 300px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); 
+        }
+
+        /* Contenedor de cartas */
+        .carta-lista { 
+            max-width: 400px; 
+            text-align: left; 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); 
+        }
+
+        .carta { 
+            cursor: pointer; 
+            padding: 10px; 
+            border-bottom: 1px solid #bbb; 
+            transition: background 0.3s; 
+            color: white; 
+        }
+
+        .carta:hover { 
+            background-color: rgba(255, 255, 255, 0.2); 
+        }
+
+        #infoCarta { 
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: rgba(0, 0, 0, 0.9); 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); 
+            text-align: center; 
+            color: white; 
+        }
+
+        #infoCarta img { 
+            max-width: 250px; 
+            margin-top: 10px; 
+            border-radius: 10px; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Botón arriba -->
+    <div class="boton-container">
+        <button onclick="irAPagina()">Consultar Dos Cartas</button>
+    </div>
+
+    <!-- Título de la página -->
+    <h2>Oráculo de Belline</h2>
+
+    <!-- Contenedor principal (Imágenes a la izquierda, cartas a la derecha) -->
+    <div class="container">
+        <!-- Imágenes -->
+        <div class="imagenes-container">
+            <img src="imagenes/portada.jpg" alt="Oráculo de Belline" class="imagen-portada">
+            <img src="imagenes/portada_2.jpg" alt="Imagen adicional 1" class="imagen-extra">
+            <img src="imagenes/portada_3.jpg" alt="Imagen adicional 2" class="imagen-extra">
+            <img src="imagenes/portada_4.jpg" alt="Imagen adicional 1" class="imagen-extra">
+            <img src="imagenes/portada_5.jpg" alt="Imagen adicional 2" class="imagen-extra">
+            <img src="imagenes/portada_6.jpg" alt="Imagen adicional 2" class="imagen-extra">
+        </div>
+
+        <!-- Cartas -->
+        <div class="carta-lista" id="cartas"></div>
+    </div>
+
+    <!-- Modal de información de la carta seleccionada -->
+    <div id="infoCarta">
+        <h3 id="nombreCarta"></h3>
+        <img id="imagenCarta" src="" alt="Imagen de la carta">
+        <p id="descripcionCarta"></p>
+        <button onclick="cerrarInfo()">Cerrar</button>
+    </div>
+
+    <script>
+        function irAPagina() {
+            window.location.href = "oraculo_2_cartas.html";
+        }
+
+        const cartas = [
+            { 
+    nombre: "La Carta Azul", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Espiritualidad, Fe, Protección, Armonía, Serenidad, Inspiración, Conexión Divina, Equilibrio, Confianza, Claridad Mental.\n\n📖 Representa la espiritualidad, la fe y la influencia celestial. Es una carta que transmite calma, confianza y protección en el camino del consultante.\n\n📖 Comentario: Un momento de conexión con lo sagrado, donde la intuición y la serenidad guían el camino. Invita a confiar en la luz interior y en la protección que rodea al consultante.", 
+    imagen: "imagenes/Azul.jpg" 
+},
+
+{ 
+    nombre: "El Destino", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Nuevas oportunidades, Camino, Elección, Cambio, Transformación, Futuro, Propósito, Ciclos, Fluidez, Decisiones.\n\n📖 Simboliza la apertura de nuevas oportunidades y caminos. Indica que el consultante está en un momento crucial de decisiones que pueden cambiar su vida de manera significativa.\n\n📖 Comentario: Es hora de tomar las riendas del propio destino. Cada elección abrirá puertas y marcará la senda del futuro.", 
+    imagen: "imagenes/1.jpg" 
+},
+
+{ 
+    nombre: "La Estrella del Hombre", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Masculinidad, Energía Yang, Firmeza, Liderazgo, Acción, Protección, Iniciativa, Fortaleza, Determinación, Seguridad.\n\n📖 Representa el ideal masculino, la energía yang y la firmeza. Indica fortaleza y confianza en la toma de decisiones y en la construcción de proyectos.\n\n📖 Comentario: Un llamado a actuar con determinación y confianza. La seguridad en uno mismo será clave para superar cualquier obstáculo.", 
+    imagen: "imagenes/2.jpg" 
+},
+
+{ 
+    nombre: "La Estrella de la Mujer", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Intuición, Energía Femenina, Receptividad, Sensibilidad, Creatividad, Fertilidad, Amor, Conexión Emocional, Inspiración, Dulzura.\n\n📖 Simboliza la receptividad, la intuición y la energía femenina. Es una carta que habla de la importancia de conectar con las emociones y la sabiduría interna.\n\n📖 Comentario: La sensibilidad y la intuición serán guías poderosas en este momento. Escuchar el corazón traerá claridad y bienestar.", 
+    imagen: "imagenes/3.jpg" 
+},
+
+{ 
+    nombre: "La Natividad", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Nuevo Comienzo, Crecimiento, Renacimiento, Creación, Oportunidades, Cambio, Evolución, Inicios, Potencial, Esperanza.\n\n📖 Anuncia el nacimiento de algo nuevo, ya sea un proyecto o una etapa en la vida. Es un augurio de crecimiento y evolución que invita a aprovechar el momento.\n\n📖 Comentario: Es el momento de sembrar nuevas ideas y aceptar cambios con entusiasmo. Cada comienzo trae consigo infinitas posibilidades.", 
+    imagen: "imagenes/4.jpg" 
+},
+
+{ 
+    nombre: "Éxito", 
+    descripcion: "✅ Muy Positiva\n\n🔹 Palabras clave: Logro, Reconocimiento, Triunfo, Prosperidad, Superación, Metas, Recompensa, Crecimiento, Celebración, Plenitud.\n\n📖 Indica logros, reconocimientos y realización de objetivos. Es una carta que anuncia victorias y la concreción de esfuerzos previos en diferentes ámbitos de la vida.\n\n📖 Comentario: Todo el esfuerzo realizado da frutos. Disfrutar los logros y compartir la alegría atraerá aún más éxito.", 
+    imagen: "imagenes/5.jpg" 
+},
+
+            { nombre: "Elevación", 
+    descripcion: "✅ Muy Positiva\n\n🔹 Palabras clave: Crecimiento, Ascenso, Progreso, Avance, Superación, Desarrollo, Espiritualidad, Sabiduría, Éxito, Potencial.\n\n📖 Simboliza progreso, crecimiento personal y avance espiritual. Es una señal de que el consultante está en el camino correcto hacia la evolución y el éxito.\n\n📖 Comentario: Avanzar con determinación y confianza. Cada peldaño subido acerca más a la realización personal y profesional.", 
+    imagen: "imagenes/6.jpg" 
+},
+
+            { 
+    nombre: "Honores", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Reconocimiento, Prestigio, Éxito, Recompensa, Distinción, Ascenso, Gloria, Mérito, Logros, Triunfo, Respeto, Influencia, Reputación, Admiración, Promoción, Gratificación.\n\n📖 Esta carta es un augurio positivo, que indica que el esfuerzo y la dedicación serán recompensados, ya sea en la vida profesional, personal o espiritual. También sugiere que es un buen momento para consolidar la posición social o profesional del consultante.\n\n📖 Comentario: Es tiempo de recibir el reconocimiento merecido. La reputación y los logros obtenidos abrirán nuevas puertas hacia el éxito.", 
+    imagen: "imagenes/7.jpg" 
+},
+
+{ 
+    nombre: "Pensamiento-Amistad", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Reflexión, Consejo, Amistad Verdadera, Comunicación, Confianza, Apoyo, Entendimiento, Compañerismo, Inteligencia Emocional, Diálogo.\n\n📖 Representa la importancia del pensamiento claro y la influencia de las amistades en la vida del consultante. Indica apoyo y compañía en momentos de toma de decisiones importantes.\n\n📖 Comentario: Rodearse de amistades sinceras permitirá tomar mejores decisiones. La reflexión y el consejo de otros pueden ser clave en este momento.", 
+    imagen: "imagenes/8.jpg" 
+},
+
+{ 
+    nombre: "Campo-Salud", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Naturaleza, Bienestar, Equilibrio, Vitalidad, Cuidado Personal, Armonía, Energía Positiva, Relajación, Recuperación, Sanación.\n\n📖 Simboliza la relación entre la salud y la naturaleza. Indica la necesidad de descanso, de conexión con el entorno natural y de cuidar el cuerpo y la mente para recuperar energía.\n\n📖 Comentario: La salud es el mayor tesoro. Buscar el equilibrio entre el cuerpo y la mente fortalecerá la vitalidad y traerá bienestar duradero.", 
+    imagen: "imagenes/9.jpg" 
+},
+
+{ 
+    nombre: "Regalos", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Generosidad, Bendiciones, Sorpresas, Oportunidades, Agradecimiento, Éxito, Prosperidad, Fortuna, Felicidad, Gratificación.\n\n📖 Anuncia la llegada de algo positivo e inesperado en la vida del consultante. Puede tratarse de una recompensa, una ayuda o un presente valioso en el ámbito personal o profesional.\n\n📖 Comentario: Aceptar con gratitud lo que la vida ofrece atraerá más bendiciones. Es momento de disfrutar de lo recibido y compartir la alegría con los demás.", 
+    imagen: "imagenes/10.jpg" 
+},
+
+{ 
+    nombre: "Traición", 
+    descripcion: "❌ Negativa\n\n🔹 Palabras clave: Engaño, Deslealtad, Falsedad, Manipulación, Advertencia, Secretos, Conflictos, Desconfianza, Pérdida, Ilusión Rota.\n\n📖 Advierte sobre la posibilidad de una traición o deslealtad en el entorno del consultante. Puede señalar engaños en el ámbito personal, profesional o amoroso.\n\n📖 Comentario: Es fundamental mantenerse alerta ante falsas promesas o intenciones ocultas. No confiar ciegamente y analizar con prudencia las relaciones cercanas.", 
+    imagen: "imagenes/11.jpg" 
+},
+{ 
+    nombre: "Partida", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Viaje, Cambio, Transición, Movimiento, Nuevas Oportunidades, Despedida, Evolución, Adaptación, Renovación, Progreso.\n\n📖 Esta carta simboliza un cambio inminente, un desplazamiento que puede ser físico, emocional o espiritual. Indica la necesidad de avanzar y dejar atrás lo que ya no aporta crecimiento.\n\n📖 Comentario: Es el momento de soltar lo viejo y abrirse a nuevas experiencias. Todo cambio trae oportunidades si se afronta con valentía y optimismo.", 
+    imagen: "imagenes/12.jpg" 
+},
+
+{ 
+    nombre: "Inconstancia", 
+    descripcion: "⚠️ Neutra/Dependiendo del contexto\n\n🔹 Palabras clave: Inestabilidad, Dudas, Indecisión, Falta de Compromiso, Volubilidad, Cambios de Humor, Impulsividad, Inseguridad, Adaptabilidad.\n\n📖 Esta carta representa la falta de firmeza en decisiones o situaciones. Puede advertir sobre comportamientos erráticos o señalar la necesidad de mayor enfoque y estabilidad.\n\n📖 Comentario: Reflexionar antes de actuar será clave para evitar errores. La constancia y el compromiso permitirán lograr mejores resultados.", 
+    imagen: "imagenes/13.jpg" 
+},
+
+{ 
+    nombre: "Descubrimiento", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Revelación, Aprendizaje, Descubrimiento Interior, Innovación, Conocimiento, Claridad, Verdad, Expansión, Exploración, Inspiración.\n\n📖 Representa el momento de encontrar una verdad oculta o recibir información valiosa. Puede señalar nuevas ideas, inventos o revelaciones espirituales y personales.\n\n📖 Comentario: Estar abierto a nuevas perspectivas y aprendizajes será clave en este período. La claridad mental y la intuición guiarán el camino.", 
+    imagen: "imagenes/14.jpg" 
+},
+
+{ 
+    nombre: "El Agua", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Fluidez, Emociones, Intuición, Sensibilidad, Curación, Adaptabilidad, Relajación, Sanación, Equilibrio, Espiritualidad.\n\n📖 Simboliza la receptividad, la intuición y la conexión con las emociones más profundas. También representa la purificación y la sanación.\n\n📖 Comentario: Dejarse llevar por la corriente de la vida permitirá encontrar armonía y equilibrio. La conexión con las emociones y la intuición será clave.", 
+    imagen: "imagenes/15.jpg" 
+},
+
+{ 
+    nombre: "Los Penates", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Protección, Hogar, Familia, Tradición, Estabilidad, Seguridad, Arraigo, Herencia, Bienestar, Fortaleza.\n\n📖 Representa la protección del hogar y la familia. Simboliza los valores tradicionales y la seguridad que brindan las raíces y el entorno familiar.\n\n📖 Comentario: Fortalecer los lazos familiares y cuidar el hogar traerá bienestar y estabilidad. La tradición y el arraigo tienen un papel importante en este momento.", 
+    imagen: "imagenes/16.jpg" 
+},
+           { 
+    nombre: "Enfermedad", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Dolencia, Debilidad, Malestar, Agotamiento, Recuperación, Sanación, Salud Frágil, Advertencia, Estrés, Cuidado.\n\n📖 Representa una advertencia sobre la salud física o emocional. Puede indicar momentos de debilidad, agotamiento o la necesidad de descanso y cuidado.\n\n📖 Comentario: Escuchar al cuerpo y tomarse el tiempo necesario para la recuperación será clave en este momento.", 
+    imagen: "imagenes/17.jpg" 
+},
+
+{ 
+    nombre: "Cambio", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Transformación, Evolución, Movimiento, Renovación, Adaptabilidad, Oportunidad, Progreso, Transición, Giro del Destino.\n\n📖 Indica la llegada de un cambio importante en la vida del consultante. Puede ser un nuevo comienzo, una oportunidad inesperada o un ajuste necesario para avanzar.\n\n📖 Comentario: Aceptar el cambio con una mentalidad abierta traerá nuevas oportunidades. Es un periodo de crecimiento y renovación.", 
+    imagen: "imagenes/18.jpg" 
+},
+
+{ 
+    nombre: "Dinero", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Abundancia, Prosperidad, Finanzas, Riqueza, Recursos, Negocios, Oportunidad, Éxito Económico, Seguridad Material.\n\n📖 Representa la estabilidad financiera, el éxito en negocios y la llegada de nuevas oportunidades económicas. Puede indicar una ganancia inesperada o mejoras en la situación financiera.\n\n📖 Comentario: Aprovechar los recursos con inteligencia permitirá asegurar estabilidad a largo plazo.", 
+    imagen: "imagenes/19.jpg" 
+},
+
+{ 
+    nombre: "La Inteligencia", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Sabiduría, Claridad Mental, Razonamiento, Lógica, Conocimiento, Decisiones Acertadas, Estrategia, Innovación.\n\n📖 Representa la capacidad de tomar decisiones con lucidez y sabiduría. Indica que el consultante cuenta con las herramientas intelectuales para resolver cualquier desafío.\n\n📖 Comentario: Usar la inteligencia y la estrategia conducirá a soluciones efectivas y a la toma de buenas decisiones.", 
+    imagen: "imagenes/20.jpg" 
+},
+
+{ 
+    nombre: "Robo-Pérdida", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Engaño, Pérdida, Traición, Estafa, Advertencia, Precaución, Protección, Falta de Control, Despojo.\n\n📖 Indica la posibilidad de sufrir una pérdida, ya sea material, emocional o espiritual. Puede señalar engaños, traiciones o situaciones que requieren vigilancia y cautela.\n\n📖 Comentario: Estar alerta y protegerse de posibles engaños o fraudes evitará problemas futuros.", 
+    imagen: "imagenes/21.jpg" 
+},
+
+{ 
+    nombre: "Las Empresas", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Negocios, Proyectos, Crecimiento Profesional, Inversión, Oportunidad, Emprendimiento, Estabilidad Económica, Expansión.\n\n📖 Representa el éxito en negocios y emprendimientos. Indica un momento favorable para inversiones y para consolidar proyectos laborales.\n\n📖 Comentario: Con disciplina y visión estratégica, se logrará el éxito en los proyectos emprendidos.", 
+    imagen: "imagenes/22.jpg" 
+},
+
+{ 
+    nombre: "El Tráfico", 
+    descripcion: "⚠️ Neutra/Dependiendo del contexto\n\n🔹 Palabras clave: Movimiento, Comunicación, Intercambios, Redes, Conexiones, Fluctuación, Negociación, Viajes, Oportunidades.\n\n📖 Representa la actividad constante y el dinamismo en la vida del consultante. Puede indicar cambios rápidos, desplazamientos o nuevas oportunidades que llegan a través del entorno.\n\n📖 Comentario: Mantenerse flexible y abierto al cambio permitirá aprovechar las oportunidades que se presentan.", 
+    imagen: "imagenes/23.jpg" 
+},
+
+{ 
+    nombre: "Noticia", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Mensaje, Comunicación, Información, Anuncio, Descubrimiento, Revelación, Cambio Inminente.\n\n📖 Indica la llegada de una noticia importante que traerá claridad o un giro en la situación del consultante. Puede ser una revelación inesperada o la confirmación de un asunto pendiente.\n\n📖 Comentario: Estar atento a los mensajes del entorno facilitará la toma de decisiones con base en la nueva información recibida.", 
+    imagen: "imagenes/24.jpg" 
+},
+
+           { 
+    nombre: "Los Placeres", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Disfrute, Satisfacción, Alegría, Diversión, Relajación, Gozar la Vida, Bienestar, Comodidad.\n\n📖 Representa momentos de felicidad y disfrute. Indica que el consultante se encuentra en una etapa donde puede permitirse disfrutar de los pequeños placeres de la vida.\n\n📖 Comentario: Aprovechar las experiencias agradables sin caer en los excesos es la clave del equilibrio.", 
+    imagen: "imagenes/25.jpg" 
+},
+
+{ 
+    nombre: "La Paz", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Armonía, Equilibrio, Serenidad, Resolución de Conflictos, Tranquilidad, Reposo, Comprensión, Unión.\n\n📖 Representa la llegada de un periodo de calma y estabilidad. Indica que los problemas encuentran solución y que es momento de disfrutar de la tranquilidad.\n\n📖 Comentario: Mantener una actitud serena y buscar la conciliación en las relaciones permitirá sostener este estado de paz.", 
+    imagen: "imagenes/26.jpg" 
+},
+
+{ 
+    nombre: "La Unión", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Alianza, Compromiso, Asociación, Conexión, Relación Fuerte, Cooperación, Fusión, Acuerdo.\n\n📖 Simboliza la creación de lazos fuertes en relaciones personales, familiares o profesionales. Puede anunciar un matrimonio, una sociedad o un pacto beneficioso.\n\n📖 Comentario: La cooperación y la confianza mutua serán esenciales para fortalecer cualquier tipo de relación.", 
+    imagen: "imagenes/27.jpg" 
+},
+
+{ 
+    nombre: "La Maldad", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Engaño, Traición, Manipulación, Perversidad, Egoísmo, Deslealtad, Conflictos Ocultos.\n\n📖 Advierte sobre la presencia de personas malintencionadas o situaciones deshonestas. Puede señalar que alguien en el entorno del consultante actúa con malas intenciones.\n\n📖 Comentario: Mantenerse alerta y no confiar ciegamente en todos los que rodean al consultante es clave en este momento.", 
+    imagen: "imagenes/32.jpg" 
+},
+
+{ 
+    nombre: "El Pleito", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Conflicto, Pelea, Litigio, Desacuerdo, Tensión, Justicia, Disputa, Ruptura.\n\n📖 Indica enfrentamientos o problemas legales. Puede representar conflictos personales, laborales o judiciales que necesitan ser resueltos con prudencia.\n\n📖 Comentario: Es recomendable evitar confrontaciones innecesarias y buscar soluciones pacíficas para minimizar daños.", 
+    imagen: "imagenes/33.jpg" 
+},
+
+{ 
+    nombre: "El Despotismo", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Autoritarismo, Control, Opresión, Abuso de Poder, Inflexibilidad, Egoísmo.\n\n📖 Representa el dominio excesivo de una persona sobre otra o el abuso de autoridad en una situación específica. Puede señalar una figura dominante que impone su voluntad.\n\n📖 Comentario: Es importante reconocer cuándo alguien está ejerciendo un control excesivo y establecer límites saludables.", 
+    imagen: "imagenes/34.jpg" 
+},
+
+{ 
+    nombre: "Las Negociaciones", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Acuerdo, Diplomacia, Mediación, Estrategia, Cooperación, Trato Justo, Soluciones Mutuas.\n\n📖 Indica la posibilidad de llegar a acuerdos favorables en cualquier ámbito. Puede señalar éxito en conversaciones de negocios, acuerdos laborales o reconciliaciones.\n\n📖 Comentario: La habilidad para dialogar y ceder cuando sea necesario permitirá alcanzar el mejor resultado posible.", 
+    imagen: "imagenes/36.jpg" 
+},
+
+{ 
+    nombre: "El Fuego", 
+    descripcion: "⚠️ Neutra\n\n🔹 Palabras clave: Pasión, Energía, Destrucción, Renovación, Impulso, Intensidad, Transformación.\n\n📖 Representa una fuerza poderosa que puede ser constructiva o destructiva. Puede indicar tanto una gran motivación y vitalidad como una advertencia sobre acciones impulsivas.\n\n📖 Comentario: Canalizar la energía de forma positiva permitirá aprovechar su potencial sin generar caos.", 
+    imagen: "imagenes/37.jpg" 
+},
+
+{ 
+    nombre: "El Accidente", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Peligro, Imprevisto, Advertencia, Riesgo, Precaución, Infortunio, Contratiempo.\n\n📖 Advierte sobre situaciones inesperadas que pueden generar dificultades. Puede señalar riesgos físicos, financieros o emocionales que deben manejarse con cuidado.\n\n📖 Comentario: Es recomendable estar prevenido y actuar con prudencia para minimizar posibles daños.", 
+    imagen: "imagenes/38.jpg" 
+},
+
+           { 
+    nombre: "El Apoyo", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Protección, Estabilidad, Asistencia, Mentoría, Ayuda, Influencia Positiva, Seguridad, Confianza.\n\n📖 Representa la presencia de una persona poderosa o influyente que ofrece apoyo en el camino del consultante. Puede señalar ayuda financiera, emocional o profesional.\n\n📖 Comentario: Aceptar el apoyo de los demás y reconocer el valor del trabajo en equipo permitirá superar cualquier obstáculo.", 
+    imagen: "imagenes/39.jpg" 
+},
+
+{ 
+    nombre: "Belleza", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Armonía, Placer, Estética, Creatividad, Apreciación, Arte, Elegancia, Seducción, Encanto.\n\n📖 Representa el amor por lo bello y lo artístico en la vida. Indica una fase de armonía, bienestar y apreciación de los placeres sensoriales.\n\n📖 Comentario: Es un buen momento para rodearse de belleza en todas sus formas y disfrutar de la inspiración que esto brinda.", 
+    imagen: "imagenes/40.jpg" 
+},
+
+{ 
+    nombre: "La Herencia", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Legado, Tradición, Sabiduría Ancestral, Transmisión, Bienes, Patrimonio, Enriquecimiento, Conocimiento.\n\n📖 Representa la conexión con el pasado y el valor de lo heredado, ya sea en términos materiales o espirituales. También habla de la importancia de preservar la sabiduría ancestral.\n\n📖 Comentario: Honrar el pasado y aprender de él es clave para construir un futuro sólido.", 
+    imagen: "imagenes/41.jpg" 
+},
+
+{ 
+    nombre: "La Sabiduría", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Conocimiento, Experiencia, Reflexión, Claridad Mental, Inteligencia, Aprendizaje, Filosofía, Visión.\n\n📖 Representa la capacidad de tomar decisiones acertadas basadas en la experiencia y la razón. Indica un momento de lucidez en el que se pueden resolver problemas con sabiduría.\n\n📖 Comentario: La paciencia y el análisis serán las mejores herramientas para enfrentar cualquier desafío.", 
+    imagen: "imagenes/42.jpg" 
+},
+
+{ 
+    nombre: "La Fama", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Reconocimiento, Éxito, Prestigio, Popularidad, Influencia, Logros, Reputación, Exposición Pública.\n\n📖 Representa el impacto de la imagen pública y el reconocimiento obtenido por el esfuerzo y la dedicación. Puede indicar oportunidades para brillar en el ámbito profesional o social.\n\n📖 Comentario: Aprovechar la buena reputación y mantenerse humilde permitirá sostener el éxito en el tiempo.", 
+    imagen: "imagenes/43.jpg" 
+},
+
+{ 
+    nombre: "El Cambio", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Transformación, Evolución, Ciclos, Renovación, Oportunidades, Movimiento, Transición, Adaptación.\n\n📖 Anuncia una etapa de transformación profunda. Puede implicar un cambio positivo en cualquier aspecto de la vida y la necesidad de adaptarse a nuevas circunstancias.\n\n📖 Comentario: Fluir con los cambios y aprovechar las oportunidades será clave para el éxito futuro.", 
+    imagen: "imagenes/44.jpg" 
+},
+
+{ 
+    nombre: "La Felicidad", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Alegría, Plenitud, Bienestar, Amor, Paz, Realización, Optimismo, Abundancia, Éxito.\n\n📖 Señala un periodo de satisfacción y armonía en la vida del consultante. Representa la concreción de sueños y la estabilidad emocional.\n\n📖 Comentario: Disfrutar el presente y compartir la felicidad con los demás amplifica su efecto positivo.", 
+    imagen: "imagenes/45.jpg" 
+},
+
+{ 
+    nombre: "El Infortunio", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Dificultades, Adversidades, Obstáculos, Pruebas, Pérdidas, Desafíos, Desgracia, Luchas.\n\n📖 Representa momentos de dificultad y la necesidad de encontrar fuerzas para superarlos. Puede indicar contratiempos, pero también oportunidades de aprendizaje.\n\n📖 Comentario: La resiliencia y la capacidad de adaptarse a las circunstancias adversas serán esenciales en este momento.", 
+    imagen: "imagenes/46.jpg" 
+},
+
+{ 
+    nombre: "La Esterilidad", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Estancamiento, Bloqueos, Falta de Progreso, Frustración, Infertilidad, Carencia, Dificultad para Avanzar.\n\n📖 Indica un momento en el que los esfuerzos no parecen dar frutos. Puede representar bloqueos emocionales, laborales o creativos que requieren ser resueltos.\n\n📖 Comentario: Es importante analizar qué está impidiendo el avance y buscar nuevas estrategias para generar movimiento.", 
+    imagen: "imagenes/47.jpg" 
+},
+
+{ 
+    nombre: "La Fatalidad", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Destino, Inevitabilidad, Rupturas, Transformaciones Dolorosas, Fin de una Etapa, Pruebas de Vida.\n\n📖 Indica eventos inevitables que pueden traer consigo cambios drásticos. Representa una transición dolorosa pero necesaria para la evolución personal.\n\n📖 Comentario: Aceptar lo que no se puede cambiar y aprender de las experiencias difíciles permitirá encontrar luz en la oscuridad.", 
+    imagen: "imagenes/48.jpg" 
+},
+
+{ 
+    nombre: "La Gracia", 
+    descripcion: "✅ Positiva\n\n🔹 Palabras clave: Protección, Inspiración, Intervención Divina, Ayuda Inesperada, Fe, Conexión Espiritual, Iluminación.\n\n📖 Representa un momento de bendiciones y asistencia inesperada. Indica que la suerte está del lado del consultante y que situaciones difíciles pueden resolverse de manera milagrosa.\n\n📖 Comentario: Mantener la fe y la apertura permitirá recibir las bendiciones que el universo tiene preparadas.", 
+    imagen: "imagenes/49.jpg" 
+},
+
+{ 
+    nombre: "La Ruina", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Crisis, Pérdida, Derrumbe, Destrucción, Decadencia, Fracaso, Necesidad de Reconstrucción.\n\n📖 Advierte sobre la posibilidad de una crisis o caída en algún aspecto de la vida del consultante. Puede representar la pérdida de algo importante, pero también la oportunidad de reconstruir sobre bases más firmes.\n\n📖 Comentario: Aceptar el cambio y aprender de los errores permitirá transformar una crisis en una nueva oportunidad.", 
+    imagen: "imagenes/50.jpg" 
+},
+
+{ 
+    nombre: "El Retraso", 
+    descripcion: "⚠️ Neutra\n\n🔹 Palabras clave: Obstáculos, Pausas, Tiempos de Espera, Lentitud, Demoras, Paciencia, Ajustes Necesarios.\n\n📖 Indica que ciertos planes o proyectos pueden tomar más tiempo del esperado. Es una carta que habla de la necesidad de paciencia y ajustes estratégicos antes de avanzar.\n\n📖 Comentario: Aprender a fluir con los tiempos y confiar en que todo llega en su momento adecuado es clave.", 
+    imagen: "imagenes/51.jpg" 
+},
+
+{ 
+    nombre: "El Encierro", 
+    descripcion: "⚠️ Negativa\n\n🔹 Palabras clave: Restricciones, Aislamiento, Bloqueos Emocionales, Limitaciones, Prisión, Falta de Libertad, Encierro Mental.\n\n📖 Representa una situación en la que el consultante se siente atrapado, ya sea por factores externos o por sus propias emociones y pensamientos.\n\n📖 Comentario: Identificar si el encierro es autoimpuesto o externo ayudará a encontrar la mejor manera de liberarse de él.", 
+    imagen: "imagenes/52.jpg" 
+}
+        ];
+
+        const cartasDiv = document.getElementById("cartas");
+        cartas.forEach((carta, index) => {
+            let div = document.createElement("div");
+            div.className = "carta";
+            div.innerText = carta.nombre;
+            div.onclick = () => mostrarInfo(index);
+            cartasDiv.appendChild(div);
+        });
+
+        function mostrarInfo(index) {
+            document.getElementById("nombreCarta").innerText = cartas[index].nombre;
+            document.getElementById("descripcionCarta").innerText = cartas[index].descripcion;
+            document.getElementById("imagenCarta").src = cartas[index].imagen;
+            document.getElementById("infoCarta").style.display = "block";
+        }
+
+        function cerrarInfo() {
+            document.getElementById("infoCarta").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>
